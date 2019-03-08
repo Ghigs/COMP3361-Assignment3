@@ -1,0 +1,56 @@
+1:* trace4v_wprotect.txt
+2:* Test write protections (should be no cmp mismatches, faults as specified in comments)
+3:400000  alloc 2
+4:* Store data in 2nd page, then set it non-writable
+5:404000  fill 22 4000
+6:404000  perm 1  0
+7:* Make sure 1st page is still writable
+8:403ff0  fill 11 10
+9:400000  fill 11 10
+10:400010  fill 22 10
+11:403ff0  cmp 400000 20
+12:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22
+13:* Next line should generate a Write Permission Fault on the second byte
+14:403fff  set  99 aa
+Write Permission Fault at address 0404000
+15:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 22 22 22 22 22 22 22 22
+16:* Next line should generate a Write Permission Fault
+17:403ff8  fill 57 10
+Write Permission Fault at address 0404000
+18:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 22 22 22 22 22 22 22 22
+19:* Next line should generate a Write Permission Fault
+20:400000  dup 407ff8 8
+Write Permission Fault at address 0407ff8
+21:407ff8  print 8
+0407ff8: 22 22 22 22 22 22 22 22
+22:
+23:* Set 2nd page writable; following lines should run without faults or errors
+24:404000  perm 1  1
+25:* Preset all bytes of both pages
+26:400000  fill cb 8000
+27:* Make sure 1st page is still writable
+28:403ff0  fill 11 10
+29:400000  fill 11 10
+30:400010  fill 22 10
+31:403ff0  cmp 400000 10
+32:404100  cmp 400100 100
+33:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb
+34:* Next line should NOT generate a Write Permission Fault on the second byte
+35:403fff  set  99 aa
+36:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 aa cb cb cb cb cb cb cb
+37:* Next line should NOT generate a Write Permission Fault
+38:403ff8  fill 57 10
+39:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57
+40:* Next line should NOT generate a Write Permission Fault
+41:400000  dup 407ff8 8
+42:407ff8  print 8
+0407ff8: 11 11 11 11 11 11 11 11
+43:* end of trace

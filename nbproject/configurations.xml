@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>FrameAllocator.h</itemPath>
+      <itemPath>PageTableManager.h</itemPath>
+      <itemPath>Process.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>FrameAllocator.cpp</itemPath>
+      <itemPath>PageTableManager.cpp</itemPath>
+      <itemPath>Process.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+    <itemPath>trace1v.txt</itemPath>
+    <itemPath>trace2v_multi-page.txt</itemPath>
+    <itemPath>trace3v_edge-addr.txt</itemPath>
+    <itemPath>trace4v_wprotect.txt</itemPath>
+    <itemPath>trace5v_pagefaults.txt</itemPath>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>11</standard>
+          <incDir>
+            <pElem>../MemorySubsystemW2019</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../MemorySubsystemW2019"
+                            CT="3"
+                            CN="Debug"
+                            AC="true"
+                            BL="true"
+                            WD="../MemorySubsystemW2019"
+                            BC="${MAKE}  -f Makefile CONF=Debug"
+                            CC="${MAKE}  -f Makefile CONF=Debug clean"
+                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libmemorysubsystemw2019.a">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="FrameAllocator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FrameAllocator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PageTableManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PageTableManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Process.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Process.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="trace1v.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace2v_multi-page.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace3v_edge-addr.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace4v_wprotect.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace5v_pagefaults.txt" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>11</standard>
+          <incDir>
+            <pElem>../MemorySubsystemW2019</pElem>
+          </incDir>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibProjectItem>
+              <makeArtifact PL="../MemorySubsystemW2019"
+                            CT="3"
+                            CN="Release"
+                            AC="false"
+                            BL="true"
+                            WD="../MemorySubsystemW2019"
+                            BC="${MAKE}  -f Makefile CONF=Release"
+                            CC="${MAKE}  -f Makefile CONF=Release clean"
+                            OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libmemorysubsystemw2019.a">
+              </makeArtifact>
+            </linkerLibProjectItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="FrameAllocator.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FrameAllocator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PageTableManager.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PageTableManager.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Process.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Process.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="trace1v.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace2v_multi-page.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace3v_edge-addr.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace4v_wprotect.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="trace5v_pagefaults.txt" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

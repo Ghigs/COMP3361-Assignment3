@@ -1,0 +1,39 @@
+1:* trace1v.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+2:*   Mismatches and other errors should occur only as indicated in the comments.
+3:*   Print output should exactly match sample output.
+4:2340000 alloc 1
+5:* Print out start of range (should be all 0)
+6:2340000 print 10
+2340000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+7:* Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
+8:2342000 cmp 2342000 10 
+9:2343ff0 cmp 2342000 10
+10:* Fill entire page with different value and check again
+11:2340000 fill e3 4000
+12:2340000 print 10
+2340000: e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3
+13:2340000 cmp 2342000 10 
+14:2343ff0 cmp 2342000 10
+15:* Store some values and compare
+16:2341e01 set b1 b2 b3 b4 b5
+17:2341e02 set c2
+18:2341e00 print 7
+2341e00: e3 b1 c2 b3 b4 b5 e3
+19:2342af1 set b1 c2 b3 b4 b5
+20:2341e00 cmp 2342af0 10
+21:* Another fill
+22:2341e02 fill 55 3
+23:2342af2 set 55 55 55
+24:2341e00 cmp 2342af0 10
+25:* The following should generate a mismatch on the 2nd and 4th bytes
+26:2342af2 set aa 55 bb
+27:2342af0 cmp 2341e00 10
+cmp error, addr1 = 2342af2, value = aa, addr2 = 2341e02, value = 55
+cmp error, addr1 = 2342af4, value = bb, addr2 = 2341e04, value = 55
+28:* Test dup
+29:2343000 set c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+30:2343000 dup 2343800 10
+31:2343800 print 10
+2343800: c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+32:23437ff cmp 2342fff 12
+33:* end of trace

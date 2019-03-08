@@ -1,0 +1,56 @@
+1:* trace5v_pagefaults.txt
+2:* Test page fault handling
+3:400000  alloc 1
+4:754000  alloc 3
+5:af8000  alloc 4
+6:ffc000  alloc 1
+7:* Each of the following lines should generate a Page Fault
+8:1000000 cmp  ffc000 1
+Read Page Fault at address 1000000
+9:b04000  cmp  754000 4001
+Read Page Fault at address 0b08000
+10:3fffff  set  2
+Write Page Fault at address 03fffff
+11:403ffe  set  3
+12:403ff8  print 10
+0403ff8: 00 00 00 00 00 00 03 00Read Page Fault at address 0404000
+13:* Test that set completes up to the last byte before page fault
+14:*   (set should page fault at last byte, print should succeed)
+15:403ffe  set  22 33 44 
+Write Page Fault at address 0404000
+16:403ffe  print 2
+0403ffe: 22 33
+17:* Test that fill completes up to last byte before page fault
+18:* (fill page faults, prints should succeed)
+19:ffc000  fill fa 4001
+Write Page Fault at address 1000000
+20:ffc000  print 10
+0ffc000: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+21:fffff0  print 10
+0fffff0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+22:* Test that dup completes up to a read page fault
+23:* (dup page faults, set, fill, and cmp should succeed)
+24:75fffe  set a2 b3
+25:b00030  fill c4 4
+26:b00030  print 10
+0b00030: c4 c4 c4 c4 00 00 00 00 00 00 00 00 00 00 00 00
+27:75fffe  dup b00031 4
+Read Page Fault at address 0760000
+28:b00030  print 10
+0b00030: c4 a2 b3 c4 00 00 00 00 00 00 00 00 00 00 00 00
+29:* Test that dup  completes up to a write page fault
+30:* (dup page faults, set and cmp should succeed)
+31:400208  set 18 19 1a 1b 1c 1d 1e 1f
+32:400208  dup  b07ffc 8
+Write Page Fault at address 0b08000
+33:400208  cmp  b07ffc 4
+34:400208  print 8
+0400208: 18 19 1a 1b 1c 1d 1e 1f
+35:b07ffc  print 4
+0b07ffc: 18 19 1a 1b
+36:* Test that cmp completes up to a page fault. The next line should
+37:* generate one mismatch and then a page fault.
+38:400208  cmp b07fff 8
+cmp error, addr1 = 0400208, value = 18, addr2 = 0b07fff, value = 1b
+Read Page Fault at address 0b08000
+39:* end of trace

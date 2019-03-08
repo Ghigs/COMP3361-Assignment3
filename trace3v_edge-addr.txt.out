@@ -1,0 +1,31 @@
+1:* trace3v_edge-addr.txt
+2:* Simple test of access to first/last pages in address space. 
+3:* No faults or exceptions or mismatches should occur.
+4:000000  alloc 1
+5:3ffc000 alloc 1
+6:* Make sure allocated pages are cleared to 0 by checking scattered blocks of bytes
+7:000000  print 10
+0000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+8:002000  cmp  000000 10
+9:003ff0  cmp  000000 10
+10:3ffc000 cmp  000000 10
+11:3ffe000 cmp  000000 10
+12:3fffff0 cmp  000000 10
+13:* Fill entire pages
+14:000000  fill 01 4000
+15:3ffc000 fill 02 4000
+16:* Try storing some values
+17:0000000 set ab cd ef 01 02 03 04 05
+18:3fffff8 set ab cd ef 01 02 03 04 05
+19:3fffff8 cmp 0000000 8
+20:3fffff0 print 10
+3fffff0: 02 02 02 02 02 02 02 02 ab cd ef 01 02 03 04 05
+21:0003ff0 set 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+22:3ffc008 set 01 00 aa bb cc dd ee ff
+23:3ffc000 set 09 08 07 06 05 04 03 02
+24:0003ff0 cmp 3ffc000 10
+25:0003ff0 print 10
+0003ff0: 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+26:0000000 print 10
+0000000: ab cd ef 01 02 03 04 05 01 01 01 01 01 01 01 01
+27:* end of trace

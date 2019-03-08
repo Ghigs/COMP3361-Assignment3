@@ -1,0 +1,43 @@
+* trace4v_wprotect.txt
+* Test write protections (should be no cmp mismatches, faults as specified in comments)
+400000  alloc 2
+* Store data in 2nd page, then set it non-writable
+404000  fill 22 4000
+404000  perm 1  0
+* Make sure 1st page is still writable
+403ff0  fill 11 10
+400000  fill 11 10
+400010  fill 22 10
+403ff0  cmp 400000 20
+403ff0  print 20 
+* Next line should generate a Write Permission Fault on the second byte
+403fff  set  99 aa
+403ff8  print 10
+* Next line should generate a Write Permission Fault
+403ff8  fill 57 10
+403ff8  print 10
+* Next line should generate a Write Permission Fault
+400000  dup 407ff8 8
+407ff8  print 8
+
+* Set 2nd page writable; following lines should run without faults or errors
+404000  perm 1  1
+* Preset all bytes of both pages
+400000  fill cb 8000
+* Make sure 1st page is still writable
+403ff0  fill 11 10
+400000  fill 11 10
+400010  fill 22 10
+403ff0  cmp 400000 10
+404100  cmp 400100 100
+403ff0  print 20 
+* Next line should NOT generate a Write Permission Fault on the second byte
+403fff  set  99 aa
+403ff8  print 10
+* Next line should NOT generate a Write Permission Fault
+403ff8  fill 57 10
+403ff8  print 10
+* Next line should NOT generate a Write Permission Fault
+400000  dup 407ff8 8
+407ff8  print 8
+* end of trace

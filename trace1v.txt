@@ -1,0 +1,33 @@
+* trace1v.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+*   Mismatches and other errors should occur only as indicated in the comments.
+*   Print output should exactly match sample output.
+2340000 alloc 1
+* Print out start of range (should be all 0)
+2340000 print 10
+* Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
+2342000 cmp 2342000 10 
+2343ff0 cmp 2342000 10
+* Fill entire page with different value and check again
+2340000 fill e3 4000
+2340000 print 10
+2340000 cmp 2342000 10 
+2343ff0 cmp 2342000 10
+* Store some values and compare
+2341e01 set b1 b2 b3 b4 b5
+2341e02 set c2
+2341e00 print 7
+2342af1 set b1 c2 b3 b4 b5
+2341e00 cmp 2342af0 10
+* Another fill
+2341e02 fill 55 3
+2342af2 set 55 55 55
+2341e00 cmp 2342af0 10
+* The following should generate a mismatch on the 2nd and 4th bytes
+2342af2 set aa 55 bb
+2342af0 cmp 2341e00 10
+* Test dup
+2343000 set c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+2343000 dup 2343800 10
+2343800 print 10
+23437ff cmp 2342fff 12
+* end of trace
