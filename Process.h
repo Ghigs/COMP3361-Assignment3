@@ -80,7 +80,12 @@ private:
    * @param cmd command, converted to all lower case
    * @param cmdArgs arguments to command
    */
+  /**
   void CmdAlloc(const std::string &line, 
+                const std::string &cmd, 
+                const std::vector<uint32_t> &cmdArgs);
+  */
+  void CmdQuota(const std::string &line, 
                 const std::string &cmd, 
                 const std::vector<uint32_t> &cmdArgs);
   void CmdCmp(const std::string &line, 

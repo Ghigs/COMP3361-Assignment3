@@ -109,8 +109,8 @@ void Process::Exec(void) {
   
   // Select the command to execute
   while (ParseCommand(line, cmd, cmdArgs)) {
-    if (cmd == "alloc" ) {
-      CmdAlloc(line, cmd, cmdArgs);      // allocate and map pages
+    if (cmd == "quota" ) {
+      CmdQuota(line, cmd, cmdArgs);      // allocate and map pages
     } else if (cmd == "cmp") {
       CmdCmp(line, cmd, cmdArgs);        // get and compare multiple bytes
     } else if (cmd == "set") {
@@ -186,6 +186,7 @@ bool Process::ParseCommand(
   }
 }
 
+/**
 void Process::CmdAlloc(const string &line, 
                        const string &cmd, 
                        const vector<uint32_t> &cmdArgs) {
@@ -194,6 +195,14 @@ void Process::CmdAlloc(const string &line,
   ptm.MapProcessPages(proc_pmcb, cmdArgs.at(0), cmdArgs.at(1));
   memory.set_user_PMCB(proc_pmcb);
 }
+*/
+
+void Process::CmdQuota(const string &line,
+                       const string &cmd,
+                       const vector<uint32_t> &cmdArgs) {
+    
+}
+
 
 void Process::CmdCmp(const string &line,
                      const string &cmd,

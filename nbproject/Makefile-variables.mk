@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=assignment3
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/assignment3
+CND_ARTIFACT_NAME_Debug=program3
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/program3
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=assignment3.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/assignment3.tar
+CND_PACKAGE_NAME_Debug=program3.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/program3.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
-CND_ARTIFACT_NAME_Release=assignment3
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/assignment3
+CND_ARTIFACT_NAME_Release=program3
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/program3
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
-CND_PACKAGE_NAME_Release=assignment3.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/assignment3.tar
+CND_PACKAGE_NAME_Release=program3.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/program3.tar
 #
 # include compiler specific variables
 #
