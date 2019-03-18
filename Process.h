@@ -19,6 +19,18 @@
 #include <string>
 #include <vector>
 
+/**
+class PageFaultHandler : public mem::MMU::FaultHandler {
+public:
+    virtual bool Run(const mem::PMCB &pmcb);
+};
+
+class WritePermissionFaultHandler : public mem::MMU::FaultHandler {
+public:
+    virtual bool Run(const mem::PMCB &pmcb);
+};
+*/
+
 class Process {
 public:
   /**
@@ -46,13 +58,21 @@ public:
    * Exec - read and process commands from trace file
    * 
    */
-  void Exec(void);
+  bool Exec(int num_Commands);
+  
+  
+  void Alloc(mem::PMCB &pmcb, 
+                mem::Addr vaddr, 
+                size_t count);
+  
+  uint32_t getQuota();
   
 private:
   // Trace file
   std::string file_name;
   std::fstream trace;
   long line_number;
+  uint32_t quota;
 
   // Memory contents
   mem::MMU &memory;
@@ -60,6 +80,9 @@ private:
   
   // Page table access
   PageTableManager &ptm;
+  
+//  const std::shared_ptr<mem::MMU::FaultHandler> &pfh; // PageFaultHandler for this process
+ // const std::shared_ptr<mem::MMU::FaultHandler> &wpfh; // WritePermissionFaultHandler for this process
   
   /**
    * ParseCommand - parse a trace file command.
@@ -80,11 +103,7 @@ private:
    * @param cmd command, converted to all lower case
    * @param cmdArgs arguments to command
    */
-  /**
-  void CmdAlloc(const std::string &line, 
-                const std::string &cmd, 
-                const std::vector<uint32_t> &cmdArgs);
-  */
+  
   void CmdQuota(const std::string &line, 
                 const std::string &cmd, 
                 const std::vector<uint32_t> &cmdArgs);

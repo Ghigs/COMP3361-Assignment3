@@ -48,6 +48,12 @@ public:
     cout << ((pmcb.operation_state == mem::PMCB::WRITE_OP) ? "Write " : "Read ")
            << "Page Fault at address " << std::setw(7) << std:: setfill('0') 
            << std::hex << pmcb.next_vaddress << "\n";
+    
+    
+    // This should allocate new pages based on demand.
+   // Alloc(pmcb, pmcb.next_vaddress, 1); 
+    
+    // This was originally false, but i think returning false forces us to quit, which we don't want if we are trying to allocate on demand
     return false;
   }
 };
@@ -87,20 +93,26 @@ Process::Process(const string &file_name_, mem::MMU &memory_, PageTableManager &
   
   // Set up empty process page table and load process PMCB
   proc_pmcb.page_table_base = ptm.CreateProcessPageTable();
+  
+  // Attempting to create Process specific fault handlers
+  //pfh = std::make_shared<PageFaultHandler>();
+  //wpfh = std::make_shared<WritePermissionFaultHandler>();
+  
 }
 
 Process::~Process() {
   trace.close();
 }
 
-void Process::Exec(void) {
+bool Process::Exec(int num_Commands) {
   // Set the user page table
   memory.set_user_PMCB(proc_pmcb);
   
   // Set up fault handlers
+ // memory.SetPageFaultHandler(pfh);
+ // memory.SetPageFaultHandler(wpfh);
   memory.SetPageFaultHandler(std::make_shared<PageFaultHandler>());
-  memory.SetWritePermissionFaultHandler(
-    std::make_shared<WritePermissionFaultHandler>());
+  memory.SetWritePermissionFaultHandler(std::make_shared<WritePermissionFaultHandler>());
   
   // Read and process commands
   string line;                // text line read
@@ -186,21 +198,22 @@ bool Process::ParseCommand(
   }
 }
 
-/**
-void Process::CmdAlloc(const string &line, 
-                       const string &cmd, 
-                       const vector<uint32_t> &cmdArgs) {
-  // Allocate the specified memory pages
+
+void Process::Alloc(mem::PMCB &pmcb,
+                    Addr vaddr, 
+                    size_t count) {
+  // Allocate the specified memory pages  
   memory.set_kernel_PMCB();
-  ptm.MapProcessPages(proc_pmcb, cmdArgs.at(0), cmdArgs.at(1));
-  memory.set_user_PMCB(proc_pmcb);
+  ptm.MapProcessPages(pmcb, vaddr, count);
+  memory.set_user_PMCB(pmcb);
 }
-*/
+
 
 void Process::CmdQuota(const string &line,
                        const string &cmd,
                        const vector<uint32_t> &cmdArgs) {
-    
+    uint32_t count = cmdArgs.at(0);
+    quota = count;
 }
 
 
@@ -314,4 +327,8 @@ void Process::CmdPerm(const string &line,
   memory.set_kernel_PMCB();
   ptm.SetPageWritePermission(proc_pmcb, cmdArgs.at(0), cmdArgs.at(1), cmdArgs.at(2));
   memory.set_user_PMCB(proc_pmcb);
+}
+
+uint32_t Process::getQuota() {
+    return quota;
 }
