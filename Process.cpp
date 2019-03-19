@@ -46,24 +46,20 @@ public:
    */
   bool PageFaultHandler::Run(const mem::PMCB &pmcb) {
     // This should allocate new pages based on demand.
-    if (process->getPageFrameCount() + 1 > process->getQuota()) {
-        switch (pmcb.operation_state) {
-            case mem::PMCB::READ_OP:
-                cout << "Read";
-                break;
-            case mem::PMCB::WRITE_OP:
-                cout << "Write";
-                break;
-            default:
-                break;
-        }
-        cout << " Page Fault at address " << std::hex << std::setw(7) << pmcb.next_vaddress << std::endl;
-        return false;
-    }
-   process->Alloc(pmcb, pmcb.next_vaddress, 1); 
+   if (pmcb.operation_state == mem::PMCB::WRITE_OP) {
+       if (process->getPageFrameCount() + 1 > process->getQuota()) {
+           cout << "Write Page Fault at address " << std::hex << std::setw(7) << pmcb.next_vaddress << std::endl;
+           return false;
+       } else {
+           process->Alloc(pmcb, pmcb.next_vaddress, 1);
+           return true;
+       }
+   } else {
+       cout << "Read Page Fault at address " << std::hex << std::setw(7) << pmcb.next_vaddress << std::endl;
+   }
     
     // This was originally false, but i think returning false forces us to quit, which we don't want if we are trying to allocate on demand
-    return true;
+    return false;
   }
 //};
 
