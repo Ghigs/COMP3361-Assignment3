@@ -40,6 +40,6 @@ int main(int argc, char* argv[]) {
   Process process(argv[1], memory, ptm);
   
   // Run the commands
-  process.Exec();
+  process.Exec(0);
 }
 

@@ -19,17 +19,23 @@
 #include <string>
 #include <vector>
 
-/**
+class Process;
+
 class PageFaultHandler : public mem::MMU::FaultHandler {
 public:
-    virtual bool Run(const mem::PMCB &pmcb);
+    PageFaultHandler(Process* parent_process):process{parent_process} {};
+    bool Run(const mem::PMCB &pmcb);
+private:
+    Process* process;
 };
 
 class WritePermissionFaultHandler : public mem::MMU::FaultHandler {
 public:
-    virtual bool Run(const mem::PMCB &pmcb);
+    WritePermissionFaultHandler(Process* parent_process):process{parent_process} {};
+    bool Run(const mem::PMCB &pmcb);
+private:
+    Process* process;
 };
-*/
 
 class Process {
 public:
@@ -46,7 +52,7 @@ public:
   /**
    * Destructor - close trace file, clean up processing
    */
-  virtual ~Process(void);
+  ~Process();
 
   // Other constructors, assignment
   Process(const Process &other) = delete;
@@ -61,11 +67,12 @@ public:
   bool Exec(int num_Commands);
   
   
-  void Alloc(mem::PMCB &pmcb, 
+  void Alloc(const mem::PMCB &pmcb, 
                 mem::Addr vaddr, 
                 size_t count);
   
   uint32_t getQuota();
+  uint32_t getPageFrameCount() { return page_frame_count; }
   
 private:
   // Trace file
@@ -73,6 +80,7 @@ private:
   std::fstream trace;
   long line_number;
   uint32_t quota;
+  uint32_t page_frame_count;
 
   // Memory contents
   mem::MMU &memory;
@@ -81,8 +89,8 @@ private:
   // Page table access
   PageTableManager &ptm;
   
-//  const std::shared_ptr<mem::MMU::FaultHandler> &pfh; // PageFaultHandler for this process
- // const std::shared_ptr<mem::MMU::FaultHandler> &wpfh; // WritePermissionFaultHandler for this process
+  const std::shared_ptr<PageFaultHandler> pfh = std::make_shared<PageFaultHandler>(PageFaultHandler(this)); // PageFaultHandler for this process
+  const std::shared_ptr<WritePermissionFaultHandler> wpfh = std::make_shared<WritePermissionFaultHandler>(WritePermissionFaultHandler(this)); // WritePermissionFaultHandler for this process
   
   /**
    * ParseCommand - parse a trace file command.
@@ -126,6 +134,7 @@ private:
                const std::string &cmd, 
                const std::vector<uint32_t> &cmdArgs);
 };
+
 
 #endif /* PROCESS_H */
 

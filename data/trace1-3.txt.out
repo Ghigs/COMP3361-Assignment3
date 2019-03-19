@@ -1,0 +1,43 @@
+1:1:* trace1-3.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+2:1:*   Mismatches and other errors should occur only as indicated in the comments.
+3:1:*   Print output should exactly match sample output.
+4:1:1       quota
+5:1:* Cause page to be allocated
+6:1:2340002 set ab
+7:1:* Print out start of range (should be all 0)
+8:1:2340000 print 10
+2340000: 00 00 ab 00 00 00 00 00 00 00 00 00 00 00 00 00
+9:1:* Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
+10:1:2340002 set 00
+11:1:2342000 cmp 2340000 10 
+12:1:2343ff0 cmp 2342000 10
+13:1:* Fill entire page with different value and check again
+14:1:2340000 fill e3 4000
+15:1:2340000 print 10
+2340000: e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3
+16:1:2340000 cmp 2342000 10 
+17:1:2343ff0 cmp 2342000 10
+18:1:* Store some values and compare
+19:1:2341e01 set b1 b2 b3 b4 b5
+20:1:2341e02 set c2
+21:1:2341e00 print 7
+2341e00: e3 b1 c2 b3 b4 b5 e3
+22:1:2342af1 set b1 c2 b3 b4 b5
+23:1:2341e00 cmp 2342af0 10
+24:1:* Another fill
+25:1:2341e02 fill 55 3
+26:1:2342af2 set 55 55 55
+27:1:2341e00 cmp 2342af0 10
+28:1:* The following should generate a mismatch on the 2nd and 4th bytes
+29:1:2342af2 set aa 55 bb
+30:1:2342af0 cmp 2341e00 10
+cmp error, addr1 = 2342af2, value = aa, addr2 = 2341e02, value = 55
+cmp error, addr1 = 2342af4, value = bb, addr2 = 2341e04, value = 55
+31:1:* Test dup
+32:1:2343000 set c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+33:1:2343000 dup 2343800 10
+34:1:2343800 print 10
+2343800: c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+35:1:23437ff cmp 2342fff 12
+36:1:* end of trace
+36:1:TERMINATED, free page frames = 7e

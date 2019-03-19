@@ -1,6 +1,7 @@
-* trace4v_wprotect.txt
+* trace4-3_wprotect.txt
 * Test write protections (should be no cmp mismatches, faults as specified in comments)
-400000  alloc 2
+2       quota
+400000  set  00
 * Store data in 2nd page, then set it non-writable
 404000  fill 22 4000
 404000  perm 1  0

@@ -1,0 +1,66 @@
+1:1:* trace2-3_multi-page.txt
+2:1:*   Allocates 2 disjoint groups of pages.  No fault or exceptions should occur.
+3:1:*   Mismatches and other errors should occur only as indicated in the comments.
+4:1:3       quota
+5:1:660000  set  00
+6:1:667fff  set  00
+7:1:66b000  set  00
+8:1:* Spot check pages cleared to 0
+9:1:660000   print 10 
+0660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+10:1:664000   cmp  660000 10  
+11:1:668000   cmp  660000 10  
+12:1:66bff0   cmp  668000 10  
+13:1:* Fill all 3 pages with preset value
+14:1:660000   fill 42 c000
+15:1:* Store and check some data
+16:1:663ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df
+17:1:667ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df 
+18:1:667ff7   cmp 663ff7 12
+19:1:663ff0   print 20
+0663ff0: 42 42 42 42 42 42 42 42 d0 d1 d2 d3 d4 d5 d6 d7
+0664000: d8 d9 da db dc dd de df 42 42 42 42 42 42 42 42
+20:1:
+21:1:* Allocate more pages
+22:1:7       quota
+23:1:166000f set ab
+24:1:166c00f set ab
+25:1:166400f set ab
+26:1:166800f set ab
+27:1:* Spot check pages cleared to 0 except for single byte written
+28:1:1660000 print 10
+1660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ab
+29:1:* Each cmp should have a single mismatch comparing 00 to ab
+30:1:1660000 cmp 166fff0 10
+cmp error, addr1 = 166000f, value = ab, addr2 = 166ffff, value = 00
+31:1:1664000 cmp 166fff0 10
+cmp error, addr1 = 166400f, value = ab, addr2 = 166ffff, value = 00
+32:1:1668000 cmp 166fff0 10
+cmp error, addr1 = 166800f, value = ab, addr2 = 166ffff, value = 00
+33:1:166c000 cmp 166fff0 10
+cmp error, addr1 = 166c00f, value = ab, addr2 = 166ffff, value = 00
+34:1:
+35:1:* Test fill, and copy from original pages to new pages
+36:1:663ff8  dup 1663ff0 10
+37:1:667ff8  cmp 1663ff0 10
+38:1:1669000 fill 70 1000
+39:1:1669000 dup  66a000  1000
+40:1:66a000  cmp  1669000 1000
+41:1:66a800  fill 07 800
+42:1:1669800 fill 07 800
+43:1:66a000  cmp  1669000 1000
+44:1:66a7f8  print 10
+066a7f8: 70 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07
+45:1:16697f9 print 10
+16697f9: 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07 07
+46:1:
+47:1:* The following line tests that cmp will generate errors on mismatches.
+48:1:* There should be two mismatched bytes.  These should be the only cmp errors
+49:1:* in this file except where indicated above.
+50:1:1663ff4 set 04
+51:1:1663ffe set 0e
+52:1:1663ff0 cmp 663ff8 10
+cmp error, addr1 = 1663ff4, value = 04, addr2 = 0663ffc, value = d4
+cmp error, addr1 = 1663ffe, value = 0e, addr2 = 0664006, value = de
+53:1:* end of trace
+53:1:TERMINATED, free page frames = 7e

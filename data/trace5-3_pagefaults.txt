@@ -1,0 +1,30 @@
+* trace5-3_pagefaults.txt
+* Test read page fault handling and quota handling
+
+* Allocate some pages (no page faults yet)
+8       quota
+ffc000  fill  00  4000
+ffc000  dup   400000 4000
+400000  dup   754000 4000
+75bfff  set   00
+75dcba  set   00
+754000  dup   af8000 c000
+b00000  fill  00  4000
+* Each of the following lines should generate a read Page Fault
+1000000 cmp  ffc000 1
+b04000  cmp  754000 4001
+403ff8  print 10
+* Test that dup completes up to a read page fault
+* (dup read page faults, set, print, and fill should succeed)
+75fffe  set a2 b3
+b03ffc  fill c4 4
+b03ff0  print 10
+75fffe  dup b03ff0 4
+* This print statement should page fault after 10 bytes
+b03ff0  print 20
+* Test that cmp completes up to a read page fault. The next line should
+* generate one mismatch and then a read page fault.
+400208  cmp b03fff 8
+* The next line should cause the process to terminate with quota exceeded
+b040ff  set 00
+* end of trace

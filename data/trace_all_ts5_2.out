@@ -1,0 +1,480 @@
+1:1:* trace1-3.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+2:1:*   Mismatches and other errors should occur only as indicated in the comments.
+3:1:*   Print output should exactly match sample output.
+4:1:1       quota
+5:1:* Cause page to be allocated
+6:1:2340002 set ab
+7:1:* Print out start of range (should be all 0)
+8:1:2340000 print 10
+2340000: 00 00 ab 00 00 00 00 00 00 00 00 00 00 00 00 00
+9:1:* Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
+10:1:2340002 set 00
+11:1:2342000 cmp 2340000 10 
+1:2:* trace2-3_multi-page.txt
+2:2:*   Allocates 2 disjoint groups of pages.  No fault or exceptions should occur.
+3:2:*   Mismatches and other errors should occur only as indicated in the comments.
+4:2:3       quota
+5:2:660000  set  00
+6:2:667fff  set  00
+7:2:66b000  set  00
+8:2:* Spot check pages cleared to 0
+9:2:660000   print 10 
+0660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+1:3:* trace3-3_edge-addr.txt
+2:3:* Simple test of access to first/last pages in address space. 
+3:3:* No faults or exceptions or mismatches should occur.
+4:3:2       quota
+5:3:000000  set 00
+6:3:3ffcfff set 00
+7:3:* Make sure allocated pages are cleared to 0 by checking scattered blocks of bytes
+8:3:000000  print 10
+0000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+9:3:3fffff0 print 10
+3fffff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+1:4:* trace4-3_wprotect.txt
+2:4:* Test write protections (should be no cmp mismatches, faults as specified in comments)
+3:4:2       quota
+4:4:400000  set  00
+5:4:* Store data in 2nd page, then set it non-writable
+6:4:404000  fill 22 4000
+7:4:404000  perm 1  0
+8:4:* Make sure 1st page is still writable
+9:4:403ff0  fill 11 10
+1:5:* trace5-3_pagefaults.txt
+2:5:* Test read page fault handling and quota handling
+3:5:
+4:5:* Allocate some pages (no page faults yet)
+5:5:8       quota
+6:5:ffc000  fill  00  4000
+7:5:ffc000  dup   400000 4000
+8:5:400000  dup   754000 4000
+9:5:75bfff  set   00
+1:6:* trace1-3.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+2:6:*   Mismatches and other errors should occur only as indicated in the comments.
+3:6:*   Print output should exactly match sample output.
+4:6:1       quota
+5:6:* Cause page to be allocated
+6:6:2340002 set ab
+7:6:* Print out start of range (should be all 0)
+8:6:2340000 print 10
+2340000: 00 00 ab 00 00 00 00 00 00 00 00 00 00 00 00 00
+9:6:* Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
+10:6:2340002 set 00
+11:6:2342000 cmp 2340000 10 
+1:7:* trace2-3_multi-page.txt
+2:7:*   Allocates 2 disjoint groups of pages.  No fault or exceptions should occur.
+3:7:*   Mismatches and other errors should occur only as indicated in the comments.
+4:7:3       quota
+5:7:660000  set  00
+6:7:667fff  set  00
+7:7:66b000  set  00
+8:7:* Spot check pages cleared to 0
+9:7:660000   print 10 
+0660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+1:8:* trace3-3_edge-addr.txt
+2:8:* Simple test of access to first/last pages in address space. 
+3:8:* No faults or exceptions or mismatches should occur.
+4:8:2       quota
+5:8:000000  set 00
+6:8:3ffcfff set 00
+7:8:* Make sure allocated pages are cleared to 0 by checking scattered blocks of bytes
+8:8:000000  print 10
+0000000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+9:8:3fffff0 print 10
+3fffff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+1:9:* trace4-3_wprotect.txt
+2:9:* Test write protections (should be no cmp mismatches, faults as specified in comments)
+3:9:2       quota
+4:9:400000  set  00
+5:9:* Store data in 2nd page, then set it non-writable
+6:9:404000  fill 22 4000
+7:9:404000  perm 1  0
+8:9:* Make sure 1st page is still writable
+9:9:403ff0  fill 11 10
+1:10:* trace5-3_pagefaults.txt
+2:10:* Test read page fault handling and quota handling
+3:10:
+4:10:* Allocate some pages (no page faults yet)
+5:10:8       quota
+6:10:ffc000  fill  00  4000
+7:10:ffc000  dup   400000 4000
+8:10:400000  dup   754000 4000
+9:10:75bfff  set   00
+12:1:2343ff0 cmp 2342000 10
+13:1:* Fill entire page with different value and check again
+14:1:2340000 fill e3 4000
+15:1:2340000 print 10
+2340000: e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3
+16:1:2340000 cmp 2342000 10 
+17:1:2343ff0 cmp 2342000 10
+10:2:664000   cmp  660000 10  
+11:2:668000   cmp  660000 10  
+12:2:66bff0   cmp  668000 10  
+13:2:* Fill all 3 pages with preset value
+14:2:660000   fill 42 c000
+15:2:* Store and check some data
+16:2:663ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df
+10:3:002000  cmp  000000 10
+11:3:003ff0  cmp  000000 10
+12:3:3ffc000 cmp  000000 10
+13:3:3ffe000 cmp  000000 10
+14:3:* Fill entire pages
+15:3:000000  fill 01 4000
+10:4:400000  fill 11 10
+11:4:400010  fill 22 10
+12:4:403ff0  cmp 400000 20
+13:4:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22
+14:4:* Next line should generate a Write Permission Fault on the second byte
+15:4:403fff  set  99 aa
+Write Permission Fault at address 0404000
+10:5:75dcba  set   00
+11:5:754000  dup   af8000 c000
+12:5:b00000  fill  00  4000
+13:5:* Each of the following lines should generate a read Page Fault
+14:5:1000000 cmp  ffc000 1
+Read Page Fault at address 1000000
+15:5:b04000  cmp  754000 4001
+Read Page Fault at address 0b04000
+12:6:2343ff0 cmp 2342000 10
+13:6:* Fill entire page with different value and check again
+14:6:2340000 fill e3 4000
+15:6:2340000 print 10
+2340000: e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3 e3
+16:6:2340000 cmp 2342000 10 
+17:6:2343ff0 cmp 2342000 10
+10:7:664000   cmp  660000 10  
+11:7:668000   cmp  660000 10  
+12:7:66bff0   cmp  668000 10  
+13:7:* Fill all 3 pages with preset value
+14:7:660000   fill 42 c000
+15:7:* Store and check some data
+16:7:663ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df
+10:8:002000  cmp  000000 10
+11:8:003ff0  cmp  000000 10
+12:8:3ffc000 cmp  000000 10
+13:8:3ffe000 cmp  000000 10
+14:8:* Fill entire pages
+15:8:000000  fill 01 4000
+10:9:400000  fill 11 10
+11:9:400010  fill 22 10
+12:9:403ff0  cmp 400000 20
+13:9:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22 22
+14:9:* Next line should generate a Write Permission Fault on the second byte
+15:9:403fff  set  99 aa
+Write Permission Fault at address 0404000
+10:10:75dcba  set   00
+11:10:754000  dup   af8000 c000
+12:10:b00000  fill  00  4000
+13:10:* Each of the following lines should generate a read Page Fault
+14:10:1000000 cmp  ffc000 1
+Read Page Fault at address 1000000
+15:10:b04000  cmp  754000 4001
+Read Page Fault at address 0b04000
+18:1:* Store some values and compare
+19:1:2341e01 set b1 b2 b3 b4 b5
+20:1:2341e02 set c2
+21:1:2341e00 print 7
+2341e00: e3 b1 c2 b3 b4 b5 e3
+22:1:2342af1 set b1 c2 b3 b4 b5
+23:1:2341e00 cmp 2342af0 10
+17:2:667ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df 
+18:2:667ff7   cmp 663ff7 12
+19:2:663ff0   print 20
+0663ff0: 42 42 42 42 42 42 42 42 d0 d1 d2 d3 d4 d5 d6 d7
+0664000: d8 d9 da db dc dd de df 42 42 42 42 42 42 42 42
+20:2:
+21:2:* Allocate more pages
+22:2:7       quota
+23:2:166000f set ab
+16:3:3ffc000 fill 02 4000
+17:3:* Try storing some values
+18:3:0000000 set ab cd ef 01 02 03 04 05
+19:3:3fffff8 set ab cd ef 01 02 03 04 05
+20:3:3fffff8 cmp 0000000 8
+21:3:3fffff0 print 10
+3fffff0: 02 02 02 02 02 02 02 02 ab cd ef 01 02 03 04 05
+16:4:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 22 22 22 22 22 22 22 22
+17:4:* Next line should generate a Write Permission Fault
+18:4:403ff8  fill 57 10
+Write Permission Fault at address 0404000
+19:4:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 22 22 22 22 22 22 22 22
+20:4:* Next line should generate a Write Permission Fault
+21:4:400000  dup 407ff8 8
+Write Permission Fault at address 0407ff8
+22:4:407ff8  print 8
+0407ff8: 22 22 22 22 22 22 22 22
+16:5:403ff8  print 10
+0403ff8: 00 00 00 00 00 00 00 00Read Page Fault at address 0404000
+17:5:* Test that dup completes up to a read page fault
+18:5:* (dup read page faults, set, print, and fill should succeed)
+19:5:75fffe  set a2 b3
+20:5:b03ffc  fill c4 4
+21:5:b03ff0  print 10
+0b03ff0: 00 00 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+22:5:75fffe  dup b03ff0 4
+Read Page Fault at address 0760000
+18:6:* Store some values and compare
+19:6:2341e01 set b1 b2 b3 b4 b5
+20:6:2341e02 set c2
+21:6:2341e00 print 7
+2341e00: e3 b1 c2 b3 b4 b5 e3
+22:6:2342af1 set b1 c2 b3 b4 b5
+23:6:2341e00 cmp 2342af0 10
+17:7:667ff8   set  d0  d1  d2  d3  d4  d5  d6  d7  d8  d9  da  db  dc  dd  de  df 
+18:7:667ff7   cmp 663ff7 12
+19:7:663ff0   print 20
+0663ff0: 42 42 42 42 42 42 42 42 d0 d1 d2 d3 d4 d5 d6 d7
+0664000: d8 d9 da db dc dd de df 42 42 42 42 42 42 42 42
+20:7:
+21:7:* Allocate more pages
+22:7:7       quota
+23:7:166000f set ab
+16:8:3ffc000 fill 02 4000
+17:8:* Try storing some values
+18:8:0000000 set ab cd ef 01 02 03 04 05
+19:8:3fffff8 set ab cd ef 01 02 03 04 05
+20:8:3fffff8 cmp 0000000 8
+21:8:3fffff0 print 10
+3fffff0: 02 02 02 02 02 02 02 02 ab cd ef 01 02 03 04 05
+16:9:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 22 22 22 22 22 22 22 22
+17:9:* Next line should generate a Write Permission Fault
+18:9:403ff8  fill 57 10
+Write Permission Fault at address 0404000
+19:9:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 22 22 22 22 22 22 22 22
+20:9:* Next line should generate a Write Permission Fault
+21:9:400000  dup 407ff8 8
+Write Permission Fault at address 0407ff8
+22:9:407ff8  print 8
+0407ff8: 22 22 22 22 22 22 22 22
+16:10:403ff8  print 10
+0403ff8: 00 00 00 00 00 00 00 00Read Page Fault at address 0404000
+17:10:* Test that dup completes up to a read page fault
+18:10:* (dup read page faults, set, print, and fill should succeed)
+19:10:75fffe  set a2 b3
+20:10:b03ffc  fill c4 4
+21:10:b03ff0  print 10
+0b03ff0: 00 00 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+22:10:75fffe  dup b03ff0 4
+Read Page Fault at address 0760000
+24:1:* Another fill
+25:1:2341e02 fill 55 3
+26:1:2342af2 set 55 55 55
+27:1:2341e00 cmp 2342af0 10
+28:1:* The following should generate a mismatch on the 2nd and 4th bytes
+29:1:2342af2 set aa 55 bb
+30:1:2342af0 cmp 2341e00 10
+cmp error, addr1 = 2342af2, value = aa, addr2 = 2341e02, value = 55
+cmp error, addr1 = 2342af4, value = bb, addr2 = 2341e04, value = 55
+24:2:166c00f set ab
+25:2:166400f set ab
+26:2:166800f set ab
+27:2:* Spot check pages cleared to 0 except for single byte written
+28:2:1660000 print 10
+1660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ab
+29:2:* Each cmp should have a single mismatch comparing 00 to ab
+30:2:1660000 cmp 166fff0 10
+cmp error, addr1 = 166000f, value = ab, addr2 = 166ffff, value = 00
+22:3:0003ff0 set 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+23:3:3ffc008 set 01 00 aa bb cc dd ee ff
+24:3:3ffc000 set 09 08 07 06 05 04 03 02
+25:3:0003ff0 cmp 3ffc000 10
+26:3:0003ff0 print 10
+0003ff0: 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+23:4:
+24:4:* Set 2nd page writable; following lines should run without faults or errors
+25:4:404000  perm 1  1
+26:4:* Preset all bytes of both pages
+27:4:400000  fill cb 8000
+28:4:* Make sure 1st page is still writable
+29:4:403ff0  fill 11 10
+30:4:400000  fill 11 10
+31:4:400010  fill 22 10
+23:5:* This print statement should page fault after 10 bytes
+24:5:b03ff0  print 20
+0b03ff0: a2 b3 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+0b04000:Read Page Fault at address 0b04000
+25:5:* Test that cmp completes up to a read page fault. The next line should
+26:5:* generate one mismatch and then a read page fault.
+27:5:400208  cmp b03fff 8
+cmp error, addr1 = 0400208, value = 00, addr2 = 0b03fff, value = c4
+Read Page Fault at address 0b04000
+28:5:* The next line should cause the process to terminate with quota exceeded
+29:5:b040ff  set 00
+Quota exceeded, process terminated, free page frames = 58
+24:6:* Another fill
+25:6:2341e02 fill 55 3
+26:6:2342af2 set 55 55 55
+27:6:2341e00 cmp 2342af0 10
+28:6:* The following should generate a mismatch on the 2nd and 4th bytes
+29:6:2342af2 set aa 55 bb
+30:6:2342af0 cmp 2341e00 10
+cmp error, addr1 = 2342af2, value = aa, addr2 = 2341e02, value = 55
+cmp error, addr1 = 2342af4, value = bb, addr2 = 2341e04, value = 55
+24:7:166c00f set ab
+25:7:166400f set ab
+26:7:166800f set ab
+27:7:* Spot check pages cleared to 0 except for single byte written
+28:7:1660000 print 10
+1660000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ab
+29:7:* Each cmp should have a single mismatch comparing 00 to ab
+30:7:1660000 cmp 166fff0 10
+cmp error, addr1 = 166000f, value = ab, addr2 = 166ffff, value = 00
+22:8:0003ff0 set 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+23:8:3ffc008 set 01 00 aa bb cc dd ee ff
+24:8:3ffc000 set 09 08 07 06 05 04 03 02
+25:8:0003ff0 cmp 3ffc000 10
+26:8:0003ff0 print 10
+0003ff0: 09 08 07 06 05 04 03 02 01 00 aa bb cc dd ee ff
+23:9:
+24:9:* Set 2nd page writable; following lines should run without faults or errors
+25:9:404000  perm 1  1
+26:9:* Preset all bytes of both pages
+27:9:400000  fill cb 8000
+28:9:* Make sure 1st page is still writable
+29:9:403ff0  fill 11 10
+30:9:400000  fill 11 10
+31:9:400010  fill 22 10
+23:10:* This print statement should page fault after 10 bytes
+24:10:b03ff0  print 20
+0b03ff0: a2 b3 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+0b04000:Read Page Fault at address 0b04000
+25:10:* Test that cmp completes up to a read page fault. The next line should
+26:10:* generate one mismatch and then a read page fault.
+27:10:400208  cmp b03fff 8
+cmp error, addr1 = 0400208, value = 00, addr2 = 0b03fff, value = c4
+Read Page Fault at address 0b04000
+28:10:* The next line should cause the process to terminate with quota exceeded
+29:10:b040ff  set 00
+Quota exceeded, process terminated, free page frames = 5e
+31:1:* Test dup
+32:1:2343000 set c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+33:1:2343000 dup 2343800 10
+34:1:2343800 print 10
+2343800: c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+35:1:23437ff cmp 2342fff 12
+36:1:* end of trace
+36:1:TERMINATED, free page frames = 60
+31:2:1664000 cmp 166fff0 10
+cmp error, addr1 = 166400f, value = ab, addr2 = 166ffff, value = 00
+32:2:1668000 cmp 166fff0 10
+cmp error, addr1 = 166800f, value = ab, addr2 = 166ffff, value = 00
+33:2:166c000 cmp 166fff0 10
+cmp error, addr1 = 166c00f, value = ab, addr2 = 166ffff, value = 00
+34:2:
+35:2:* Test fill, and copy from original pages to new pages
+36:2:663ff8  dup 1663ff0 10
+37:2:667ff8  cmp 1663ff0 10
+27:3:0000000 print 10
+0000000: ab cd ef 01 02 03 04 05 01 01 01 01 01 01 01 01
+28:3:* end of trace
+28:3:TERMINATED, free page frames = 63
+32:4:403ff0  cmp 400000 10
+33:4:404100  cmp 400100 100
+34:4:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb
+35:4:* Next line should NOT generate a Write Permission Fault on the second byte
+36:4:403fff  set  99 aa
+37:4:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 aa cb cb cb cb cb cb cb
+31:6:* Test dup
+32:6:2343000 set c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+33:6:2343000 dup 2343800 10
+34:6:2343800 print 10
+2343800: c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+35:6:23437ff cmp 2342fff 12
+36:6:* end of trace
+36:6:TERMINATED, free page frames = 65
+31:7:1664000 cmp 166fff0 10
+cmp error, addr1 = 166400f, value = ab, addr2 = 166ffff, value = 00
+32:7:1668000 cmp 166fff0 10
+cmp error, addr1 = 166800f, value = ab, addr2 = 166ffff, value = 00
+33:7:166c000 cmp 166fff0 10
+cmp error, addr1 = 166c00f, value = ab, addr2 = 166ffff, value = 00
+34:7:
+35:7:* Test fill, and copy from original pages to new pages
+36:7:663ff8  dup 1663ff0 10
+37:7:667ff8  cmp 1663ff0 10
+27:8:0000000 print 10
+0000000: ab cd ef 01 02 03 04 05 01 01 01 01 01 01 01 01
+28:8:* end of trace
+28:8:TERMINATED, free page frames = 68
+32:9:403ff0  cmp 400000 10
+33:9:404100  cmp 400100 100
+34:9:403ff0  print 20 
+0403ff0: 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11
+0404000: cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb cb
+35:9:* Next line should NOT generate a Write Permission Fault on the second byte
+36:9:403fff  set  99 aa
+37:9:403ff8  print 10
+0403ff8: 11 11 11 11 11 11 11 99 aa cb cb cb cb cb cb cb
+38:2:1669000 fill 70 1000
+39:2:1669000 dup  66a000  1000
+40:2:66a000  cmp  1669000 1000
+41:2:66a800  fill 07 800
+42:2:1669800 fill 07 800
+38:4:* Next line should NOT generate a Write Permission Fault
+39:4:403ff8  fill 57 10
+40:4:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57
+41:4:* Next line should NOT generate a Write Permission Fault
+42:4:400000  dup 407ff8 8
+43:4:407ff8  print 8
+0407ff8: 11 11 11 11 11 11 11 11
+44:4:* end of trace
+44:4:TERMINATED, free page frames = 6b
+38:7:1669000 fill 70 1000
+39:7:1669000 dup  66a000  1000
+40:7:66a000  cmp  1669000 1000
+41:7:66a800  fill 07 800
+42:7:1669800 fill 07 800
+38:9:* Next line should NOT generate a Write Permission Fault
+39:9:403ff8  fill 57 10
+40:9:403ff8  print 10
+0403ff8: 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57 57
+41:9:* Next line should NOT generate a Write Permission Fault
+42:9:400000  dup 407ff8 8
+43:9:407ff8  print 8
+0407ff8: 11 11 11 11 11 11 11 11
+44:9:* end of trace
+44:9:TERMINATED, free page frames = 6e
+43:2:66a000  cmp  1669000 1000
+44:2:66a7f8  print 10
+066a7f8: 70 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07
+45:2:16697f9 print 10
+16697f9: 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07 07
+46:2:
+47:2:* The following line tests that cmp will generate errors on mismatches.
+48:2:* There should be two mismatched bytes.  These should be the only cmp errors
+49:2:* in this file except where indicated above.
+50:2:1663ff4 set 04
+51:2:1663ffe set 0e
+43:7:66a000  cmp  1669000 1000
+44:7:66a7f8  print 10
+066a7f8: 70 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07
+45:7:16697f9 print 10
+16697f9: 70 70 70 70 70 70 70 07 07 07 07 07 07 07 07 07
+46:7:
+47:7:* The following line tests that cmp will generate errors on mismatches.
+48:7:* There should be two mismatched bytes.  These should be the only cmp errors
+49:7:* in this file except where indicated above.
+50:7:1663ff4 set 04
+51:7:1663ffe set 0e
+52:2:1663ff0 cmp 663ff8 10
+cmp error, addr1 = 1663ff4, value = 04, addr2 = 0663ffc, value = d4
+cmp error, addr1 = 1663ffe, value = 0e, addr2 = 0664006, value = de
+53:2:* end of trace
+53:2:TERMINATED, free page frames = 76
+52:7:1663ff0 cmp 663ff8 10
+cmp error, addr1 = 1663ff4, value = 04, addr2 = 0663ffc, value = d4
+cmp error, addr1 = 1663ffe, value = 0e, addr2 = 0664006, value = de
+53:7:* end of trace
+53:7:TERMINATED, free page frames = 7e

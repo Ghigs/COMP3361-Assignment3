@@ -29,13 +29,13 @@ using std::istringstream;
 using std::string;
 using std::vector;
 
-namespace {
-
 /**
  * PageFaultHandler
  */
+    /**
 class PageFaultHandler : public mem::MMU::FaultHandler {
 public:
+     * */
   /**
    * Run - handle fault
    * 
@@ -44,25 +44,30 @@ public:
    * @param pmcb user mode pmcb
    * @return false
    */
-  virtual bool Run(const mem::PMCB &pmcb) {
+  bool PageFaultHandler::Run(const mem::PMCB &pmcb) {
     cout << ((pmcb.operation_state == mem::PMCB::WRITE_OP) ? "Write " : "Read ")
            << "Page Fault at address " << std::setw(7) << std:: setfill('0') 
            << std::hex << pmcb.next_vaddress << "\n";
     
     
     // This should allocate new pages based on demand.
-   // Alloc(pmcb, pmcb.next_vaddress, 1); 
+    if (process->getPageFrameCount() + 1 > process->getQuota()) {
+        return false;
+    }
+   process->Alloc(pmcb, pmcb.next_vaddress, 1); 
     
     // This was originally false, but i think returning false forces us to quit, which we don't want if we are trying to allocate on demand
-    return false;
+    return true;
   }
-};
+//};
 
 /**
  * WritePermissionFaultHandler
  */
+  /**
 class WritePermissionFaultHandler : public mem::MMU::FaultHandler {
 public:
+   * */
   /**
    * Run - handle fault
    * 
@@ -71,18 +76,14 @@ public:
    * @param pmcb user mode pmcb
    * @return false
    */
-  virtual bool Run(const mem::PMCB &pmcb) {
+  bool WritePermissionFaultHandler::Run(const mem::PMCB &pmcb) {
     cout << "Write Permission Fault at address " << std::setw(7) << std:: setfill('0') 
             << std::hex << pmcb.next_vaddress << "\n";
     return false;
   }
-};
+//};
 
-
-
-}
-
-Process::Process(const string &file_name_, mem::MMU &memory_, PageTableManager &ptm_) 
+Process::Process(const std::string &file_name_, mem::MMU &memory_, PageTableManager &ptm_) 
 : file_name(file_name_), line_number(0), memory(memory_), ptm(ptm_) {
   // Open the trace file.  Abort program if can't open.
   trace.open(file_name, std::ios_base::in);
@@ -95,9 +96,6 @@ Process::Process(const string &file_name_, mem::MMU &memory_, PageTableManager &
   proc_pmcb.page_table_base = ptm.CreateProcessPageTable();
   
   // Attempting to create Process specific fault handlers
-  //pfh = std::make_shared<PageFaultHandler>();
-  //wpfh = std::make_shared<WritePermissionFaultHandler>();
-  
 }
 
 Process::~Process() {
@@ -109,10 +107,10 @@ bool Process::Exec(int num_Commands) {
   memory.set_user_PMCB(proc_pmcb);
   
   // Set up fault handlers
- // memory.SetPageFaultHandler(pfh);
- // memory.SetPageFaultHandler(wpfh);
-  memory.SetPageFaultHandler(std::make_shared<PageFaultHandler>());
-  memory.SetWritePermissionFaultHandler(std::make_shared<WritePermissionFaultHandler>());
+  memory.SetPageFaultHandler(pfh);
+  memory.SetPageFaultHandler(wpfh);
+ // memory.SetPageFaultHandler(std::make_shared<PageFaultHandler>());
+  //memory.SetWritePermissionFaultHandler(std::make_shared<WritePermissionFaultHandler>());
   
   // Read and process commands
   string line;                // text line read
@@ -199,12 +197,13 @@ bool Process::ParseCommand(
 }
 
 
-void Process::Alloc(mem::PMCB &pmcb,
+void Process::Alloc(const mem::PMCB &pmcb,
                     Addr vaddr, 
                     size_t count) {
   // Allocate the specified memory pages  
   memory.set_kernel_PMCB();
   ptm.MapProcessPages(pmcb, vaddr, count);
+  page_frame_count += count;
   memory.set_user_PMCB(pmcb);
 }
 

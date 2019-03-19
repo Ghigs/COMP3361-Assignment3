@@ -1,15 +1,16 @@
-* trace3v_edge-addr.txt
+* trace3-3_edge-addr.txt
 * Simple test of access to first/last pages in address space. 
 * No faults or exceptions or mismatches should occur.
-000000  alloc 1
-3ffc000 alloc 1
+2       quota
+000000  set 00
+3ffcfff set 00
 * Make sure allocated pages are cleared to 0 by checking scattered blocks of bytes
 000000  print 10
+3fffff0 print 10
 002000  cmp  000000 10
 003ff0  cmp  000000 10
 3ffc000 cmp  000000 10
 3ffe000 cmp  000000 10
-3fffff0 cmp  000000 10
 * Fill entire pages
 000000  fill 01 4000
 3ffc000 fill 02 4000

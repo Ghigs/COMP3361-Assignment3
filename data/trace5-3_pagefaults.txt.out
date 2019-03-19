@@ -1,0 +1,39 @@
+1:1:* trace5-3_pagefaults.txt
+2:1:* Test read page fault handling and quota handling
+3:1:
+4:1:* Allocate some pages (no page faults yet)
+5:1:8       quota
+6:1:ffc000  fill  00  4000
+7:1:ffc000  dup   400000 4000
+8:1:400000  dup   754000 4000
+9:1:75bfff  set   00
+10:1:75dcba  set   00
+11:1:754000  dup   af8000 c000
+12:1:b00000  fill  00  4000
+13:1:* Each of the following lines should generate a read Page Fault
+14:1:1000000 cmp  ffc000 1
+Read Page Fault at address 1000000
+15:1:b04000  cmp  754000 4001
+Read Page Fault at address 0b04000
+16:1:403ff8  print 10
+0403ff8: 00 00 00 00 00 00 00 00Read Page Fault at address 0404000
+17:1:* Test that dup completes up to a read page fault
+18:1:* (dup read page faults, set, print, and fill should succeed)
+19:1:75fffe  set a2 b3
+20:1:b03ffc  fill c4 4
+21:1:b03ff0  print 10
+0b03ff0: 00 00 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+22:1:75fffe  dup b03ff0 4
+Read Page Fault at address 0760000
+23:1:* This print statement should page fault after 10 bytes
+24:1:b03ff0  print 20
+0b03ff0: a2 b3 00 00 00 00 00 00 00 00 00 00 c4 c4 c4 c4
+0b04000:Read Page Fault at address 0b04000
+25:1:* Test that cmp completes up to a read page fault. The next line should
+26:1:* generate one mismatch and then a read page fault.
+27:1:400208  cmp b03fff 8
+cmp error, addr1 = 0400208, value = 00, addr2 = 0b03fff, value = c4
+Read Page Fault at address 0b04000
+28:1:* The next line should cause the process to terminate with quota exceeded
+29:1:b040ff  set 00
+Quota exceeded, process terminated, free page frames = 7e

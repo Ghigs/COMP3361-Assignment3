@@ -1,11 +1,14 @@
-* trace1v.txt - simple trace file maps 1 page, no faults or exceptions should occur.
+* trace1-3.txt - simple trace file maps 1 page, no faults or exceptions should occur.
 *   Mismatches and other errors should occur only as indicated in the comments.
 *   Print output should exactly match sample output.
-2340000 alloc 1
+1       quota
+* Cause page to be allocated
+2340002 set ab
 * Print out start of range (should be all 0)
 2340000 print 10
 * Make sure allocated page is cleared to 0 by checking scattered blocks of bytes
-2342000 cmp 2342000 10 
+2340002 set 00
+2342000 cmp 2340000 10 
 2343ff0 cmp 2342000 10
 * Fill entire page with different value and check again
 2340000 fill e3 4000
