@@ -10,7 +10,12 @@
         <group name="2018 Fall COMP3361"/>
         <group name="2019 Winter COMP3361"/>
         <group>
+            <file>file:/home/jason/NetBeansProjects/Program3/FrameAllocator.h</file>
+            <file>file:/home/jason/NetBeansProjects/Program3/main.cpp</file>
+            <file>file:/home/jason/NetBeansProjects/Program3/PageTableManager.cpp</file>
+            <file>file:/home/jason/NetBeansProjects/Program3/Process.cpp</file>
             <file>file:/home/jason/NetBeansProjects/Program3/FrameAllocator.cpp</file>
+            <file>file:/home/jason/NetBeansProjects/Program3/Process.h</file>
         </group>
     </open-files>
 </project-private>

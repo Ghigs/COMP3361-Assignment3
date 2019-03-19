@@ -45,13 +45,19 @@ public:
    * @return false
    */
   bool PageFaultHandler::Run(const mem::PMCB &pmcb) {
-    cout << ((pmcb.operation_state == mem::PMCB::WRITE_OP) ? "Write " : "Read ")
-           << "Page Fault at address " << std::setw(7) << std:: setfill('0') 
-           << std::hex << pmcb.next_vaddress << "\n";
-    
-    
     // This should allocate new pages based on demand.
     if (process->getPageFrameCount() + 1 > process->getQuota()) {
+        switch (pmcb.operation_state) {
+            case mem::PMCB::READ_OP:
+                cout << "Read";
+                break;
+            case mem::PMCB::WRITE_OP:
+                cout << "Write";
+                break;
+            default:
+                break;
+        }
+        cout << " Page Fault at address " << std::hex << std::setw(7) << pmcb.next_vaddress << std::endl;
         return false;
     }
    process->Alloc(pmcb, pmcb.next_vaddress, 1); 
@@ -94,8 +100,14 @@ Process::Process(const std::string &file_name_, mem::MMU &memory_, PageTableMana
   
   // Set up empty process page table and load process PMCB
   proc_pmcb.page_table_base = ptm.CreateProcessPageTable();
+ 
   
-  // Attempting to create Process specific fault handlers
+  // Set up fault handlers
+  memory.SetPageFaultHandler(pfh);
+  memory.SetWritePermissionFaultHandler(wpfh);
+  
+  page_frame_count = 0;
+  quota = 0;
 }
 
 Process::~Process() {
@@ -105,12 +117,6 @@ Process::~Process() {
 bool Process::Exec(int num_Commands) {
   // Set the user page table
   memory.set_user_PMCB(proc_pmcb);
-  
-  // Set up fault handlers
-  memory.SetPageFaultHandler(pfh);
-  memory.SetPageFaultHandler(wpfh);
- // memory.SetPageFaultHandler(std::make_shared<PageFaultHandler>());
-  //memory.SetWritePermissionFaultHandler(std::make_shared<WritePermissionFaultHandler>());
   
   // Read and process commands
   string line;                // text line read
